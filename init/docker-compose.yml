@@ -1,0 +1,17 @@
+services:
+  op_node_init:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: op_node_init_image:latest
+    pull_policy: build
+    volumes:
+      - ${CONFIG_DIR}:/config
+      - ./1_init_environment.sh:/script/1_init_environment.sh
+      - ./2_faucet.sh:/script/2_faucet.sh
+      - ./3_generate_config.sh:/script/3_generate_config.sh
+      - ./4_deploy_contract.sh:/script/4_deploy_contract.sh
+      - ./5_export_genesis.sh:/script/5_export_genesis.sh
+    env_file:
+      - ../common.env
+      - ../envs/${CHAIN_ENV_FILE}
