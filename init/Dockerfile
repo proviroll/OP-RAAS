@@ -1,38 +1,46 @@
-FROM debian:stable-slim
+FROM ubuntu:22.04
 
 WORKDIR /app
 
-# init system dependencies
-RUN apt-get -y update && apt-get install -y --no-install-recommends \
-    gnupg2 \
-    debian-archive-keyring && \
-    apt-get -y update && apt-get install -y sudo jq wget curl git make bc ca-certificates && \
-    sudo rm -rf /var/lib/apt/lists
+# Update system and install dependencies
+RUN apt-get update && apt-get install -y \
+    sudo \
+    jq \
+    wget \
+    curl \
+    gnupg \
+    git \
+    make \
+    bc \
+    ca-certificates \
+    && sudo rm -rf /var/lib/apt/lists/*
 
-# install go
+# Install Go
 RUN curl -sL https://golang.org/dl/go1.22.5.linux-amd64.tar.gz | tar -C /usr/local -xzf -
 ENV PATH="$PATH:/usr/local/go/bin"
 
-# install nodejs and pnpm
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-RUN apt-get install -y nodejs && npm install -g pnpm
+# Install Node.js and pnpm
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - \
+    && apt-get install -y nodejs \
+    && npm install -g pnpm
 
-# install foundry
+# Install Foundry
 ENV FOUNDRY_VERSION=${FOUNDRY_VERSION:-nightly-ef62fdbab638a275fc19a2ff8fe8951c3bd1d9aa}
-RUN curl -L https://foundry.paradigm.xyz | sudo -E bash -
-RUN . ~/.bashrc && foundryup -v "$FOUNDRY_VERSION"
+RUN curl -L https://foundry.paradigm.xyz | sudo -E bash - \
+    && . ~/.bashrc && foundryup -v "$FOUNDRY_VERSION"
 ENV PATH="~/.foundry/bin:${PATH}"
 
-# clone optimism repository
+# Clone Optimism repository
 ENV OP_REPO=https://github.com/ethereum-optimism/optimism.git
 ENV OP_VERSION=${OP_VERSION:-v1.8.0}
-RUN mkdir -p ~/optimism && cd ~/optimism && \
-    git clone $OP_REPO --depth 1 --branch $OP_VERSION --single-branch . && \
-    git switch -c $OP_VERSION && \
-    git submodule update --init --recursive --depth 1 && \
-    go mod download && go mod tidy && \
-    make -C op-node VERSION=$OP_VERSION op-node
+RUN mkdir -p ~/optimism && cd ~/optimism \
+    && git clone $OP_REPO --depth 1 --branch $OP_VERSION --single-branch . \
+    && git switch -c $OP_VERSION \
+    && git submodule update --init --recursive --depth 1 \
+    && go mod download && go mod tidy \
+    && make -C op-node VERSION=$OP_VERSION op-node
 
+# Copy and set permissions for scripts
 COPY *.sh /script/
 RUN chmod +x /script/*.sh
 
