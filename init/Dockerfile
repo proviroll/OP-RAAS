@@ -1,9 +1,12 @@
-FROM debian
+FROM debian:stable-slim
 
 WORKDIR /app
 
 # init system dependencies
-RUN apt-get -y update && apt-get install -y sudo jq wget curl gnupg git make bc ca-certificates && \
+RUN apt-get -y update && apt-get install -y --no-install-recommends \
+    gnupg2 \
+    debian-archive-keyring && \
+    apt-get -y update && apt-get install -y sudo jq wget curl git make bc ca-certificates && \
     sudo rm -rf /var/lib/apt/lists
 
 # install go
