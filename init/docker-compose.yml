@@ -1,10 +1,13 @@
+version: '3.8'
+
 services:
   op_node_init:
     build:
       context: .
       dockerfile: Dockerfile
+      cache_from:
+        - op_node_init_image:latest
     image: op_node_init_image:latest
-    pull_policy: build
     volumes:
       - ${CONFIG_DIR}:/config
       - ./1_init_environment.sh:/script/1_init_environment.sh
