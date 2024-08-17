@@ -16,4 +16,5 @@ It support steps to operate OP Stack node
 ## Quick Start
 1. Clone this repository `git clone https://github.com/luminalink-ai/op-raas.git`
 2. Check and select chain configuration in `common.env` and `/envs/{server.env}`
-3. Run Command in sequence to `make init`, `make run`, `make scan`, `make bridge`
+3. Run Command in sequence to `make init`.
+4. TODO: prepare `make run`, `make scan`, `make bridge`
