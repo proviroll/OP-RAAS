@@ -17,8 +17,9 @@ It support 2 steps to operate OP Stack node
 1. Clone this repository `git clone https://github.com/luminalink-ai/op-raas.git`
 2. Check and select chain configuration in `common.env` and `/envs/{server.env}`
 3. Run command `make init`. to generate `address.ini`, from the `common.env`
-4. Run command `make run`, to run the OP stack either on the Superchain or on one of the custom chains.
-5. TODO `make scan`, `make bridge`
+4. Run command `make run`, to run the OP stack either on the Superchain or on one of the custom chains, and `make run-down` to stop them.
+5. Run command `make explorer` to run explorer services and `make explorer-down` to stop them,
+6. !TODO `make bridge`
 
 ## Configuration
 ### Directory
