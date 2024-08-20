@@ -1,0 +1,109 @@
+version: '3.8'
+
+services:
+  init:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      cache_from:
+        - op_node_run_image:latest
+    image: op_node_run_image:latest
+    pull_policy: always
+    command: [ "bash", "/script/init-entrypoint.sh" ]
+    volumes:
+      - ${EXECUTION_DATA_DIR}:/data
+      - ${CONFIG_DIR}:/config
+      - ./init-entrypoint.sh:/script/init-entrypoint.sh
+    env_file:
+      - ../common.env
+      - ../envs/${CHAIN_ENV_FILE}
+  execution:
+    image: op_node_run_image:latest
+    pull_policy: always
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    command: [ "bash", "/script/geth-entrypoint.sh" ]
+    ports:
+      - 8545:8545 # http
+      - 8546:8546 # ws
+      - 8551:8551 # auth http
+    volumes:
+      - ${EXECUTION_DATA_DIR}:/data
+      - ${CONFIG_DIR}:/config
+      - ./geth-entrypoint.sh:/script/geth-entrypoint.sh
+    networks:
+      - op-network
+    env_file:
+      - ../common.env
+      - ../envs/${CHAIN_ENV_FILE}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "7"
+  node:
+    image: op_node_run_image:latest
+    pull_policy: always
+    depends_on:
+      - execution
+    command: [ "bash", "/script/op-node-entrypoint.sh" ]
+    networks:
+      - op-network
+    volumes:
+      - ${EXECUTION_DATA_DIR}:/data
+      - ${CONFIG_DIR}:/config
+      - ./op-node-entrypoint.sh:/script/op-node-entrypoint.sh
+    ports:
+      - 8547:8547 # RPC
+      - 9222:9222
+      - 9222:9222/udp
+    env_file:
+      - ../common.env
+      - ../envs/${CHAIN_ENV_FILE}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "7"
+  batcher:
+    image: op_node_run_image:latest
+    pull_policy: always
+    depends_on:
+      - node
+    command: [ "bash", "/script/op-batcher-entrypoint.sh" ]
+    volumes:
+      - ${CONFIG_DIR}:/config
+      - ./op-batcher-entrypoint.sh:/script/op-batcher-entrypoint.sh
+    networks:
+      - op-network
+    env_file:
+      - ../common.env
+      - ../envs/${CHAIN_ENV_FILE}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "7"
+  proposer:
+    image: op_node_run_image:latest
+    pull_policy: always
+    depends_on:
+      - batcher
+    command: [ "bash", "/script/op-proposer-entrypoint.sh" ]
+    volumes:
+      - ${CONFIG_DIR}:/config
+      - ./op-proposer-entrypoint.sh:/script/op-proposer-entrypoint.sh
+    networks:
+      - op-network
+    env_file:
+      - ../common.env
+      - ../envs/${CHAIN_ENV_FILE}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "7"
+networks:
+  op-network:
+    driver: bridge
