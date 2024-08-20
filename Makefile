@@ -1,4 +1,4 @@
-.PHONY: init run buildx buildx-init buildx-run
+.PHONY: init run run-down explorer explorer-down buildx buildx-init buildx-run
 
 # Define log files
 LOG_DIR := logs
@@ -15,11 +15,20 @@ init:
 	docker compose --env-file common.env -f init/docker-compose.yml -p op_raas_init up > $(LOG_FILE_UP) 2>&1 && \
 	docker compose --env-file common.env -f init/docker-compose.yml -p op_raas_init down > $(LOG_FILE_DOWN) 2>&1
 
-# buildx command
-buildx: buildx-init buildx-run
-
 run:
 	docker compose --env-file common.env -f run/docker-compose.yml -p op_raas_run up -d
+
+run-down:
+	docker compose --env-file common.env -f run/docker-compose.yml -p op_raas_run down
+
+explorer:
+	docker compose --env-file common.env -f scan/docker-compose.yml -p op_raas_explorer up -d
+
+explorer-down:
+	docker compose --env-file common.env -f scan/docker-compose.yml -p op_raas_explorer down
+
+# buildx command
+buildx: buildx-init buildx-run
 
 buildx-init:
 	docker buildx build \
