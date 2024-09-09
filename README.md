@@ -58,3 +58,25 @@ It support 4 steps to operate OP Stack node
 - `MAX_CHANNEL_DURATION`: Batch time submitted to the L1 (default `1500`)
 - `SEQUENCER_HTTP`: Sequencer endpoint
 - `P2P_BOOTNODES`: Bootnode enr address
+
+
+### Check L1 nodes:
+- lodestar : curl http://65.108.203.175:9596/eth/v1/node/syncing | jq
+```json
+{
+  "data": {
+    "head_slot": "5848676",
+    "sync_distance": "0",
+    "is_syncing": false,
+    "is_optimistic": false,
+    "el_offline": false
+  }
+}
+```
+
+
+- geth:  curl -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_syncing","params":[],"id":1}' "http://65.108.203.175:8546"
+
+```json
+{"jsonrpc":"2.0","id":1,"result":false}
+```
