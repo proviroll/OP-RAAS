@@ -1,12 +1,14 @@
-# OP-RAAS-Init
-This repository does help launch Optimism on User-friendly way
+# OP-RAAS
+This repository help deploy Optimism on a User-friendly way
 
 
-It support 2 steps to operate OP Stack node
+It support 4 steps to operate OP Stack node
 |  Name      | Description                                       | Command      |
 | :--------: | ------------------------------------------------- | ------------ |
 |  `init`    | deploy bridge contracts and generate l2 configs.  | `make init`  |
 |  `run`     | run optimism node using generated configs.        | `make run`   |
+|  `scan`    | run blockchain explorer using blockscout.         | `make scan`  |
+|  `bridge`  | transfer eth and tokens between L1 and L2.        | `make bridge`|
 
 ## Prerequisite
 - makefile, docker, docker-compose
@@ -25,6 +27,7 @@ It support 2 steps to operate OP Stack node
 ### Directory
 - `CONFIG_DIR`: Path to store config files (default `../config`)
 - `EXECUTION_DATA_DIR`: Path to store execution layer data (default `../data-execution`)
+- `SCAN_DATA_DIR`: Path to store explorer data (default `../data-scan`)
 
 ### L1 chain
 - `L1_CHAIN_ID`: L1 chain id (default `11155111`)
@@ -55,3 +58,25 @@ It support 2 steps to operate OP Stack node
 - `MAX_CHANNEL_DURATION`: Batch time submitted to the L1 (default `1500`)
 - `SEQUENCER_HTTP`: Sequencer endpoint
 - `P2P_BOOTNODES`: Bootnode enr address
+
+# DevOPS Guild 
+Ethereum dev prespective : 
+- How infrastructure can streamline L2 setups.
+
+
+# Notes about each section of the presentation
+## Introduction:
+- In this presentation, we will be covering a workshop that will be focused on Optimistic rollups, we will see more in details how to deploy an L2 rollup by, initializing, generating rollup configurations and genesis file, deploying necessary L1 contracts, and run the different services, i.e batcher, sequencer (node), proposer, all based on Optimism framework on custom Sepolia chain.
+
+
+## Repo explanation: 
+This repository help deploy the entire process of setting up an Optimism stack on testnet/mainnet, with a custom Ethereum verifier and Bridge that helps deposit to L2 and whithdraw to L1.
+
+# Invitation:
+- Hey there's an opportunity this week to discuss RollUps setup, where we will talk about how infrastracture team can streamline L2 chain configurations and deployments of rollups. There will be a workshop focused on Optimistic rollups, later we can see how ZK ones emerge into Ethereum.
+
+Don't forget to join us on the 12 September at 04PM CET. 
+
+Thank you!
+
+
