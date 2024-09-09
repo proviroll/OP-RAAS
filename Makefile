@@ -1,4 +1,4 @@
-.PHONY: init run run-down explorer explorer-down buildx buildx-init buildx-run
+.PHONY: init run run-down explorer explorer-down bridge buildx buildx-init buildx-run buildx-bridge
 
 # Define log files
 LOG_DIR := logs
@@ -27,6 +27,10 @@ explorer:
 explorer-down:
 	docker compose --env-file common.env -f scan/docker-compose.yml -p op_raas_explorer down
 
+bridge:
+	docker compose --env-file common.env -f bridge/docker-compose.yml -p op_raas_bridge_ui up -d
+
+
 # buildx command
 buildx: buildx-init buildx-run
 
@@ -47,3 +51,10 @@ buildx-run:
 	--build-arg OP_VERSION=$(OP_VERSION) \
 	--build-arg GETH_VERSION=$(GETH_VERSION) \
 	--push ./run
+
+buildx-bridge:
+	docker buildx build \
+	--platform linux/amd64,linux/arm64 \
+	-t chakrellah/op-bridge:1.0.0 \
+	-t chakrellah/op-bridge:latest \
+	--push ./bridge
