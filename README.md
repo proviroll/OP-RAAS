@@ -1,12 +1,14 @@
-# OP-RAAS-Init
-This repository does help launch Optimism on User-friendly way
+# OP-RAAS
+This repository help deploy Optimism on a User-friendly way
 
 
-It support 2 steps to operate OP Stack node
+It support 4 steps to operate OP Stack node
 |  Name      | Description                                       | Command      |
 | :--------: | ------------------------------------------------- | ------------ |
 |  `init`    | deploy bridge contracts and generate l2 configs.  | `make init`  |
 |  `run`     | run optimism node using generated configs.        | `make run`   |
+|  `scan`    | run blockchain explorer using blockscout.         | `make scan`  |
+|  `bridge`  | transfer eth and tokens between L1 and L2.        | `make bridge`|
 
 ## Prerequisite
 - makefile, docker, docker-compose
@@ -25,6 +27,7 @@ It support 2 steps to operate OP Stack node
 ### Directory
 - `CONFIG_DIR`: Path to store config files (default `../config`)
 - `EXECUTION_DATA_DIR`: Path to store execution layer data (default `../data-execution`)
+- `SCAN_DATA_DIR`: Path to store explorer data (default `../data-scan`)
 
 ### L1 chain
 - `L1_CHAIN_ID`: L1 chain id (default `11155111`)
