@@ -7,7 +7,7 @@ It support 4 steps to operate OP Stack node
 | :--------: | ------------------------------------------------- | ------------ |
 |  `init`    | deploy bridge contracts and generate l2 configs.  | `make init`  |
 |  `run`     | run optimism node using generated configs.        | `make run`   |
-|  `scan`    | run blockchain explorer using blockscout.         | `make scan`  |
+| `explorer`    | run blockchain explorer using blockscout.         | `make explorer`  |
 |  `bridge`  | transfer eth and tokens between L1 and L2.        | `make bridge`|
 
 ## Prerequisite
