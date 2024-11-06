@@ -1,0 +1,6 @@
+apiVersion: v2
+appVersion: v0.10.13
+description: OP Stack L2-Output Submitter, submits proposals to L1.
+name: op-proposer
+type: application
+version: 0.1.2

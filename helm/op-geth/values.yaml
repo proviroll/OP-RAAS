@@ -1,0 +1,125 @@
+replicaCount: 1
+
+image:
+  repository: ethereumoptimism/op-geth
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag:
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: LoadBalancer
+
+resources:
+  {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+#   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+#######################################
+# geth settings
+#######################################
+livenessProbe: true
+readinessProbe: true
+
+secretForVolumeMountDir: /secrets
+
+rpc:
+  http:
+    enabled: true
+    addr: 0.0.0.0
+    api: "web3,debug,eth,txpool,net,engine"
+    corsDomain: "*"
+    vhosts: "*"
+    port:
+      name: rpc-http-port
+      containerPort: 8545
+      hostPort: 8545
+  ws:
+    enabled: true
+    addr: 0.0.0.0
+    port:
+      name: rpc-ws-port
+      containerPort: 8546
+      hostPort: 8546
+    api: "debug,eth,txpool,net,engine"
+    origins: "*"
+
+authrpc:
+  enabled: true
+  addr: 0.0.0.0
+  port:
+    name: authrpc-port
+    containerPort: 8551
+    hostPort: 8551
+  jwtSecret:
+    defaultFile: abf3a433bfe1f8faa262ad82b3ec5fa572e9c045a4c44bd3b21998e77fd3632a
+    file: abf3a433bfe1f8faa262ad82b3ec5fa572e9c045a4c44bd3b21998e77fd3632a # insert a file
+    filename: jwt-secret.txt
+  vhosts: "*"
+
+pprof:
+  enabled: true
+  addr: 0.0.0.0
+  port:
+    name: pprof-port
+    containerPort: 6060
+    hostPort: 6060
+
+metrics:
+  enabled: true
+  addr: 0.0.0.0
+  port:
+    name: metrics-port
+    containerPort: 7300
+    hostPort: 7300
+
+# data path that geth db will be stored. it will go under persistence db.
+dataPath: /data
+
+genesis:
+  import: true
+  url: # URL to genesis.json
+
+syncMode: "full"
+noDiscover: true
+networkID: 42069
+maxPeers: 0
+rollup:
+  disableTxPoolGossip: true
+dataDirPassword:
+  defaultFile: abf3a433bfe1f8faa262ad82b3ec5fa572e9c045a4c44bd3b21998e77fd3632a
+  file: abf3a433bfe1f8faa262ad82b3ec5fa572e9c045a4c44bd3b21998e77fd3632a # insert a file
+  filename: datadir-secret.txt
+blockSignerKey:
+  defaultFile: abf3a433bfe1f8faa262ad82b3ec5fa572e9c045a4c44bd3b21998e77fd3632a
+  file: abf3a433bfe1f8faa262ad82b3ec5fa572e9c045a4c44bd3b21998e77fd3632a # insert a file
+  filename: block-signer-key
+allowInsecureUnlock: true
+mine:
+  enabled: true
+  sequencer: "0x0"
+args: []
+
+# See https://stack.optimism.io/docs/build/getting-started/#op-geth for "Why Archive Mode?"
+gcMode: "archive"
+
+persistence:
+  # For Optimism Testnet, you probably need at least 100Gi for the full-node.
+  size: 200Gi
+  mountDir: /root
+  name: data
