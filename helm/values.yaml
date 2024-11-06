@@ -1,0 +1,176 @@
+op-geth:
+  replicaCount: 1
+  image:
+    repository: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth
+    pullPolicy: IfNotPresent
+    tag: latest
+  nameOverride: ""
+  fullnameOverride: ""
+  service:
+    type: LoadBalancer
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  livenessProbe: true
+  readinessProbe: true
+  l1:
+    rpcAddr: https://sepolia-rpc.chainsafe.dev/HZOr49jM3N0kOj5J5AoMmVNlNT71-R_atsWK83ZeANE
+  l2:
+    batcherKey: "0xAE8E815075010F3FC69e3c46626a826f0e18743D"
+    rpcAddr: "http://execution:8545"
+    rollupAddr: "http://host.docker.internal:8545/"
+    pollInterval: "1s"
+    subSafetyMargin: 6
+    numConfirmations: 1
+    safeAbortNonceTooLowCount: 3
+    resubmissionTimeout: "30s"
+    maxChannelDuration: 120
+  rpc:
+    port:
+      name: rpc-port
+      containerPort: 8548
+      hostPort: 8548
+    addr: 0.0.0.0
+    enableAdmin: true
+  args: []
+
+op-node:
+  replicaCount: 1
+  image:
+    repository: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node
+    pullPolicy: IfNotPresent
+    tag: latest
+  nameOverride: ""
+  fullnameOverride: ""
+  service:
+    type: LoadBalancer
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  livenessProbe: true
+  readinessProbe: true
+  secretForVolumeMountDir: /secrets
+  configmapsForVolumeMountDir: /configmaps
+  l1:
+    rpcAddr: https://sepolia-rpc.chainsafe.dev/HZOr49jM3N0kOj5J5AoMmVNlNT71-R_atsWK83ZeANE
+    rpcKind: "basic"
+  l2:
+    rpcAddr: "http://execution-engine:8545"
+    jwtSecret:
+      file: # insert a file
+      filename: jwt-secret.txt
+  sequencer:
+    enabled: true
+    l1Confirmations: 3
+    p2pKey: 
+  verifier:
+    l1Confirmations: 3
+  p2p:
+    enabled: false
+    priv:
+      file: 
+      filename: p2ppriv.txt
+    listen:
+      ip: 0.0.0.0
+      tcp:
+        name: p2p-tcp-port
+        containerPort: 9003
+        hostPort: 9003
+      udp:
+        name: p2p-udp-port
+        containerPort: 9003
+        hostPort: 9003
+  rollupConfig:
+    filename: rollup.json
+  rpc:
+    port:
+      name: rpc-port
+      containerPort: 8547
+      hostPort: 8547
+    addr: 0.0.0.0
+    enableAdmin: true
+  metrics:
+    enabled: true
+    addr: 0.0.0.0
+    port:
+      name: metrics-port
+      containerPort: 7300
+      hostPort: 7300
+  pprof:
+    enabled: true
+    addr: 0.0.0.0
+    port:
+      name: pprof-port
+      containerPort: 6060
+      hostPort: 6060
+  args: []
+
+op-batcher:
+  replicaCount: 1
+  image:
+    repository: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-batcher
+    pullPolicy: IfNotPresent
+    tag: latest
+  nameOverride: ""
+  fullnameOverride: ""
+  service:
+    type: LoadBalancer
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  livenessProbe: true
+  readinessProbe: true
+  l1:
+    rpcAddr: https://sepolia-rpc.chainsafe.dev/HZOr49jM3N0kOj5J5AoMmVNlNT71-R_atsWK83ZeANE
+  l2:
+    batcherKey: "0xAE8E815075010F3FC69e3c46626a826f0e18743D"
+    rpcAddr: "http://execution:8545"
+    rollupAddr: "http://node:8547"
+    pollInterval: "1s"
+    subSafetyMargin: 6
+    numConfirmations: 1
+    safeAbortNonceTooLowCount: 3
+    resubmissionTimeout: "30s"
+    maxChannelDuration: 120
+  rpc:
+    port:
+      name: rpc-port
+      containerPort: 8548
+      hostPort: 8548
+    addr: 0.0.0.0
+    enableAdmin: true
+  args: []
+
+op-proposer:
+  replicaCount: 1
+  image:
+    repository: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-proposer
+    pullPolicy: IfNotPresent
+    tag: latest
+  nameOverride: ""
+  fullnameOverride: ""
+  service:
+    type: LoadBalancer
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  livenessProbe: true
+  readinessProbe: true
+  l1:
+    rpcAddr: https://sepolia-rpc.chainsafe.dev/HZOr49jM3N0kOj5J5AoMmVNlNT71-R_atsWK83ZeANE
+  l2:
+    proposerKey: "0x0492D045Beb73f2a954a5800BCEe34361e087d7B"
+    rollupAddr: "http://node:8547"
+    pollInterval: "12s"
+    ooAddr: " "
+  rpc:
+    port:
+      name: rpc-port
+      containerPort: 8560
+      hostPort: 8560
+    addr: 0.0.0.0
+  args: []
