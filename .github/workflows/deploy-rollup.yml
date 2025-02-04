@@ -11,16 +11,19 @@ on:
         description: 'Rollup Chain ID'
         required: true
         type: string
+        default: '1337'
       rollup_name:
         description: 'Rollup Name'
         required: true
         type: string
+        default: 'rollup'
       settlement_layer:
         description: 'Settlement Layer'
         required: true
         type: choice
         options:
           - ethereum
+        default: 'ethereum'
       settlement_environment:
         description: 'Settlement Environment'
         required: true
@@ -28,13 +31,14 @@ on:
         options:
           - testnet
           - mainnet
+        default: 'testnet'
       rollup_da:
         description: 'Data Availability Layer'
         required: true
         type: choice
         options:
           - ethereum
-
+        default: 'ethereum'
 jobs:
   deploy:
     runs-on: ubuntu-latest
