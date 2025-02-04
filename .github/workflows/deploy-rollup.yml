@@ -144,7 +144,7 @@ jobs:
           scp -r $USERNAME@$HOST:~/rollup-deploy/${{ env.BRANCH_NAME }}/config/* artifacts/
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: rollup-config-${{ env.BRANCH_NAME }}
           path: artifacts/
