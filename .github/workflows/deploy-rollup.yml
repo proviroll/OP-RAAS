@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - feat/*
+      - feat/deployment-workflow
   workflow_dispatch:
     inputs:
       rollup_chain_id:
@@ -62,13 +62,21 @@ jobs:
       - name: Set environment file based on inputs
         id: set-env
         run: |
-          if [[ "${{ inputs.settlement_layer }}" == "ethereum" ]]; then
-            if [[ "${{ inputs.settlement_environment }}" == "testnet" ]]; then
+          # Set default values for push events
+          SETTLEMENT_LAYER="${{ inputs.settlement_layer || 'ethereum' }}"
+          SETTLEMENT_ENV="${{ inputs.settlement_environment || 'testnet' }}"
+          
+          echo "Using settlement layer: $SETTLEMENT_LAYER"
+          echo "Using environment: $SETTLEMENT_ENV"
+          
+          if [[ "$SETTLEMENT_LAYER" == "ethereum" ]]; then
+            if [[ "$SETTLEMENT_ENV" == "testnet" ]]; then
               echo "env_file=custom-sepolia.env" >> $GITHUB_OUTPUT
-            elif [[ "${{ inputs.settlement_environment }}" == "mainnet" ]]; then
+            elif [[ "$SETTLEMENT_ENV" == "mainnet" ]]; then
               echo "env_file=custom-mainnet.env" >> $GITHUB_OUTPUT
             fi
           fi
+          
           # Add debug output
           echo "Selected env_file: $(cat $GITHUB_OUTPUT)"
           if [ -z "$(cat $GITHUB_OUTPUT)" ]; then
