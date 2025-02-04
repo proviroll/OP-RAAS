@@ -69,6 +69,12 @@ jobs:
               echo "env_file=custom-mainnet.env" >> $GITHUB_OUTPUT
             fi
           fi
+          # Add debug output
+          echo "Selected env_file: $(cat $GITHUB_OUTPUT)"
+          if [ -z "$(cat $GITHUB_OUTPUT)" ]; then
+            echo "Error: No environment file was selected"
+            exit 1
+          fi
 
       - name: Update common.env
         run: |
@@ -76,6 +82,16 @@ jobs:
 
       - name: Update environment file
         run: |
+          # Debug output
+          echo "Environment file path: envs/${{ steps.set-env.outputs.env_file }}"
+          
+          # Check if env file exists
+          if [ ! -f "envs/${{ steps.set-env.outputs.env_file }}" ]; then
+            echo "Error: Environment file 'envs/${{ steps.set-env.outputs.env_file }}' does not exist"
+            ls -la envs/  # List contents of envs directory
+            exit 1
+          fi
+          
           ENV_FILE="envs/${{ steps.set-env.outputs.env_file }}"
           sed -i "s/L2_CHAIN_ID=.*/L2_CHAIN_ID=${{ inputs.rollup_chain_id }}/" "$ENV_FILE"
           sed -i "s/L2_CHAIN_NAME=.*/L2_CHAIN_NAME=\"${{ inputs.rollup_name }}\"/" "$ENV_FILE"
