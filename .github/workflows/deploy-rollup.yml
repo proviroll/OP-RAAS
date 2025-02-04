@@ -1,0 +1,127 @@
+name: Deploy Rollup
+
+on:
+  workflow_dispatch:
+    inputs:
+      rollup_chain_id:
+        description: 'Rollup Chain ID'
+        required: true
+        type: string
+      rollup_name:
+        description: 'Rollup Name'
+        required: true
+        type: string
+      settlement_layer:
+        description: 'Settlement Layer'
+        required: true
+        type: choice
+        options:
+          - ethereum
+      settlement_environment:
+        description: 'Settlement Environment'
+        required: true
+        type: choice
+        options:
+          - testnet
+          - mainnet
+      rollup_da:
+        description: 'Data Availability Layer'
+        required: true
+        type: choice
+        options:
+          - ethereum
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure Git
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Create deployment branch
+        run: |
+          # Create a unique branch name using timestamp and inputs
+          BRANCH_NAME="deploy-${{ inputs.rollup_name }}-${{ inputs.settlement_environment }}-$(date +%Y%m%d-%H%M%S)"
+          echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
+          git checkout -b $BRANCH_NAME
+
+      - name: Set environment file based on inputs
+        id: set-env
+        run: |
+          if [[ "${{ inputs.settlement_layer }}" == "ethereum" ]]; then
+            if [[ "${{ inputs.settlement_environment }}" == "testnet" ]]; then
+              echo "env_file=custom-sepolia.env" >> $GITHUB_OUTPUT
+            elif [[ "${{ inputs.settlement_environment }}" == "mainnet" ]]; then
+              echo "env_file=custom-mainnet.env" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: Update common.env
+        run: |
+          sed -i "s/CHAIN_ENV_FILE=.*/CHAIN_ENV_FILE=\"${{ steps.set-env.outputs.env_file }}\"/" common.env
+
+      - name: Update environment file
+        run: |
+          ENV_FILE="envs/${{ steps.set-env.outputs.env_file }}"
+          sed -i "s/L2_CHAIN_ID=.*/L2_CHAIN_ID=${{ inputs.rollup_chain_id }}/" "$ENV_FILE"
+          sed -i "s/L2_CHAIN_NAME=.*/L2_CHAIN_NAME=\"${{ inputs.rollup_name }}\"/" "$ENV_FILE"
+
+      - name: Commit changes
+        run: |
+          git add common.env "envs/${{ steps.set-env.outputs.env_file }}"
+          git commit -m "Deploy rollup ${{ inputs.rollup_name }} on ${{ inputs.settlement_environment }}"
+          git push origin ${{ env.BRANCH_NAME }}
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy to host
+        env:
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          USERNAME: ${{ secrets.DEPLOY_USERNAME }}
+        run: |
+          # Create deployment directory with branch name
+          ssh $USERNAME@$HOST "mkdir -p ~/rollup-deploy/${{ env.BRANCH_NAME }}"
+          
+          # Copy files to host
+          scp -r ./* $USERNAME@$HOST:~/rollup-deploy/${{ env.BRANCH_NAME }}/
+          
+          # Execute deployment
+          ssh $USERNAME@$HOST "cd ~/rollup-deploy/${{ env.BRANCH_NAME }} && make init"
+
+      - name: Collect config files
+        env:
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          USERNAME: ${{ secrets.DEPLOY_USERNAME }}
+        run: |
+          mkdir -p artifacts
+          scp -r $USERNAME@$HOST:~/rollup-deploy/${{ env.BRANCH_NAME }}/config/* artifacts/
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: rollup-config-${{ env.BRANCH_NAME }}
+          path: artifacts/
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          title: "Deploy rollup ${{ inputs.rollup_name }} on ${{ inputs.settlement_environment }}"
+          body: |
+            Automated deployment PR for rollup:
+            - Name: ${{ inputs.rollup_name }}
+            - Chain ID: ${{ inputs.rollup_chain_id }}
+            - Settlement Layer: ${{ inputs.settlement_layer }}
+            - Environment: ${{ inputs.settlement_environment }}
+            - DA Layer: ${{ inputs.rollup_da }}
+          branch: ${{ env.BRANCH_NAME }}
+          base: main
+          labels: deployment
