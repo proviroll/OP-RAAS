@@ -116,50 +116,50 @@ jobs:
           git commit -m "Deploy rollup ${{ inputs.rollup_name }} on ${{ inputs.settlement_environment }}"
           git push origin ${{ env.BRANCH_NAME }}
 
-    #   - name: Setup SSH
-    #     uses: webfactory/ssh-agent@v0.8.0
-    #     with:
-    #       ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    #   - name: Deploy to host
-    #     env:
-    #       HOST: ${{ secrets.DEPLOY_HOST }}
-    #       USERNAME: ${{ secrets.DEPLOY_USERNAME }}
-    #     run: |
-    #       # Create deployment directory with branch name
-    #       ssh $USERNAME@$HOST "mkdir -p ~/rollup-deploy/${{ env.BRANCH_NAME }}"
+      - name: Deploy to host
+        env:
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          USERNAME: ${{ secrets.DEPLOY_USERNAME }}
+        run: |
+          # Create deployment directory with branch name
+          ssh $USERNAME@$HOST "mkdir -p ~/rollup-deploy/${{ env.BRANCH_NAME }}"
           
-    #       # Copy files to host
-    #       scp -r ./* $USERNAME@$HOST:~/rollup-deploy/${{ env.BRANCH_NAME }}/
+          # Copy files to host
+          scp -r ./* $USERNAME@$HOST:~/rollup-deploy/${{ env.BRANCH_NAME }}/
           
-    #       # Execute deployment
-    #       ssh $USERNAME@$HOST "cd ~/rollup-deploy/${{ env.BRANCH_NAME }} && make init"
+          # Execute deployment
+          ssh $USERNAME@$HOST "cd ~/rollup-deploy/${{ env.BRANCH_NAME }} && make init"
 
-    #   - name: Collect config files
-    #     env:
-    #       HOST: ${{ secrets.DEPLOY_HOST }}
-    #       USERNAME: ${{ secrets.DEPLOY_USERNAME }}
-    #     run: |
-    #       mkdir -p artifacts
-    #       scp -r $USERNAME@$HOST:~/rollup-deploy/${{ env.BRANCH_NAME }}/config/* artifacts/
+      - name: Collect config files
+        env:
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          USERNAME: ${{ secrets.DEPLOY_USERNAME }}
+        run: |
+          mkdir -p artifacts
+          scp -r $USERNAME@$HOST:~/rollup-deploy/${{ env.BRANCH_NAME }}/config/* artifacts/
 
-    #   - name: Upload artifacts
-    #     uses: actions/upload-artifact@v3
-    #     with:
-    #       name: rollup-config-${{ env.BRANCH_NAME }}
-    #       path: artifacts/
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: rollup-config-${{ env.BRANCH_NAME }}
+          path: artifacts/
 
-    #   - name: Create Pull Request
-    #     uses: peter-evans/create-pull-request@v5
-    #     with:
-    #       title: "Deploy rollup ${{ inputs.rollup_name }} on ${{ inputs.settlement_environment }}"
-    #       body: |
-    #         Automated deployment PR for rollup:
-    #         - Name: ${{ inputs.rollup_name }}
-    #         - Chain ID: ${{ inputs.rollup_chain_id }}
-    #         - Settlement Layer: ${{ inputs.settlement_layer }}
-    #         - Environment: ${{ inputs.settlement_environment }}
-    #         - DA Layer: ${{ inputs.rollup_da }}
-    #       branch: ${{ env.BRANCH_NAME }}
-    #       base: main
-    #       labels: deployment
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          title: "Deploy rollup ${{ inputs.rollup_name }} on ${{ inputs.settlement_environment }}"
+          body: |
+            Automated deployment PR for rollup:
+            - Name: ${{ inputs.rollup_name }}
+            - Chain ID: ${{ inputs.rollup_chain_id }}
+            - Settlement Layer: ${{ inputs.settlement_layer }}
+            - Environment: ${{ inputs.settlement_environment }}
+            - DA Layer: ${{ inputs.rollup_da }}
+          branch: ${{ env.BRANCH_NAME }}
+          base: main
+          labels: deployment
