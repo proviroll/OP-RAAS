@@ -153,18 +153,3 @@ jobs:
         with:
           name: rollup-config-${{ env.BRANCH_NAME }}
           path: artifacts/
-
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
-        with:
-          title: "Deploy rollup ${{ inputs.rollup_name }} on ${{ inputs.settlement_environment }}"
-          body: |
-            Automated deployment PR for rollup:
-            - Name: ${{ inputs.rollup_name }}
-            - Chain ID: ${{ inputs.rollup_chain_id }}
-            - Settlement Layer: ${{ inputs.settlement_layer }}
-            - Environment: ${{ inputs.settlement_environment }}
-            - DA Layer: ${{ inputs.rollup_da }}
-          branch: ${{ env.BRANCH_NAME }}
-          base: main
-          labels: deployment
