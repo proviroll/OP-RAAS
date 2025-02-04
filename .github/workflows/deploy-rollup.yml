@@ -1,5 +1,10 @@
 name: Deploy Rollup
 
+# Add permissions configuration right after the 'on:' section
+permissions:
+  contents: write
+  pull-requests: write
+
 on:
   push:
     branches:
@@ -51,11 +56,12 @@ jobs:
         run: |
           git config --global user.name 'GitHub Actions'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}
 
       - name: Create deployment branch
         run: |
           # Create a unique branch name using timestamp and inputs
-          BRANCH_NAME="deploy-${{ inputs.rollup_name }}-${{ inputs.settlement_environment }}-$(date +%Y%m%d-%H%M%S)"
+          BRANCH_NAME="deploy-${{ inputs.rollup_name || 'rollup' }}-${{ inputs.settlement_environment || 'testnet' }}-$(date +%Y%m%d-%H%M%S)"
           echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
           git checkout -b $BRANCH_NAME
 
