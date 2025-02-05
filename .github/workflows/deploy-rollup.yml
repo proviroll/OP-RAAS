@@ -95,6 +95,8 @@ jobs:
           sed -i "s/CHAIN_ENV_FILE=.*/CHAIN_ENV_FILE=\"${{ steps.set-env.outputs.env_file }}\"/" common.env
 
       - name: Update environment file
+        env:
+          FAUCET_PRIVATE_KEY: ${{ secrets.FAUCET_PRIVATE_KEY }}
         run: |
           # Debug output
           echo "Environment file path: envs/${{ steps.set-env.outputs.env_file }}"
@@ -109,6 +111,7 @@ jobs:
           ENV_FILE="envs/${{ steps.set-env.outputs.env_file }}"
           sed -i "s/L2_CHAIN_ID=.*/L2_CHAIN_ID=${{ inputs.rollup_chain_id }}/" "$ENV_FILE"
           sed -i "s/L2_CHAIN_NAME=.*/L2_CHAIN_NAME=\"${{ inputs.rollup_name }}\"/" "$ENV_FILE"
+          sed -i "s/FAUCET_PRIVATE_KEY=.*/FAUCET_PRIVATE_KEY=$FAUCET_PRIVATE_KEY/" "$ENV_FILE"
 
       - name: Commit changes
         run: |
