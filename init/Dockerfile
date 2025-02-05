@@ -28,7 +28,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - \
 ARG FOUNDRY_VERSION=${FOUNDRY_VERSION:-nightly-ef62fdbab638a275fc19a2ff8fe8951c3bd1d9aa}
 RUN curl -L https://foundry.paradigm.xyz | sudo -E bash - \
     && . ~/.bashrc && foundryup -v "$FOUNDRY_VERSION"
-ENV PATH="/root/.foundry/bin:${PATH}"  # Changed from ~/.foundry/bin to absolute path
+ENV PATH="~/.foundry/bin:${PATH}"
 
 # Clone Optimism repository
 ENV OP_REPO=https://github.com/ethereum-optimism/optimism.git
