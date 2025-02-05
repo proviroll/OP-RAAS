@@ -133,12 +133,17 @@ jobs:
         env:
           HOST: ${{ secrets.DEPLOY_HOST }}
           USERNAME: ${{ secrets.DEPLOY_USERNAME }}
+          FAUCET_PRIVATE_KEY: ${{ secrets.FAUCET_PRIVATE_KEY }}
         run: |
           # Create deployment directory with branch name
           ssh $USERNAME@$HOST "mkdir -p ~/rollup-deploy/${{ env.BRANCH_NAME }}"
           
           # Copy files to host
           scp -r ./* $USERNAME@$HOST:~/rollup-deploy/${{ env.BRANCH_NAME }}/
+          
+          # Update the env file with private key on the host
+          ssh $USERNAME@$HOST "cd ~/rollup-deploy/${{ env.BRANCH_NAME }} && \
+            sed -i \"s/FAUCET_PRIVATE_KEY=.*/FAUCET_PRIVATE_KEY=$FAUCET_PRIVATE_KEY/\" envs/${{ steps.set-env.outputs.env_file }}"
           
           # Execute deployment
           ssh $USERNAME@$HOST "cd ~/rollup-deploy/${{ env.BRANCH_NAME }} && make init"
