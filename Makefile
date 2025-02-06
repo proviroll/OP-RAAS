@@ -12,6 +12,7 @@ GETH_VERSION ?= v1.101315.2
 
 init:
 	@mkdir -p $(LOG_DIR)
+	DOCKER_BUILDKIT=0 docker compose --env-file common.env -f init/docker-compose.yml -p op_raas_init build --no-cache --progress=plain
 	docker compose --env-file common.env -f init/docker-compose.yml -p op_raas_init up > $(LOG_FILE_UP) 2>&1 && \
 	docker compose --env-file common.env -f init/docker-compose.yml -p op_raas_init down > $(LOG_FILE_DOWN) 2>&1
 
