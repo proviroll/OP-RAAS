@@ -26,9 +26,21 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - \
 
 # Install Foundry
 ARG FOUNDRY_VERSION=${FOUNDRY_VERSION:-nightly-ef62fdbab638a275fc19a2ff8fe8951c3bd1d9aa}
-RUN curl -L https://foundry.paradigm.xyz | sudo -E bash - \
-    && . ~/.bashrc && foundryup -v "$FOUNDRY_VERSION"
-ENV PATH="~/.foundry/bin:${PATH}"
+RUN curl -L https://foundry.paradigm.xyz | bash && \
+    /root/.foundry/bin/foundryup && \
+    chmod +x /root/.foundry/bin/* && \
+    ln -sf /root/.foundry/bin/cast /usr/local/bin/cast && \
+    ln -sf /root/.foundry/bin/forge /usr/local/bin/forge && \
+    ln -sf /root/.foundry/bin/anvil /usr/local/bin/anvil && \
+    echo 'export PATH="/root/.foundry/bin:/usr/local/bin:$PATH"' >> /etc/profile && \
+    echo 'export PATH="/root/.foundry/bin:/usr/local/bin:$PATH"' >> /etc/bash.bashrc && \
+    echo 'export PATH="/root/.foundry/bin:/usr/local/bin:$PATH"' >> /root/.bashrc
+
+ENV PATH="/root/.foundry/bin:/usr/local/bin:${PATH}"
+
+# Verify foundry installation
+RUN cast --version || exit 1
+ENV PATH="/root/.foundry/bin:${PATH}"
 
 # Clone Optimism repository
 ENV OP_REPO=https://github.com/ethereum-optimism/optimism.git
