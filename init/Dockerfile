@@ -28,12 +28,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - \
 ARG FOUNDRY_VERSION=${FOUNDRY_VERSION:-nightly-ef62fdbab638a275fc19a2ff8fe8951c3bd1d9aa}
 RUN curl -L https://foundry.paradigm.xyz | sudo -E bash - \
     && . ~/.bashrc && foundryup -v "$FOUNDRY_VERSION"
-
-# Add foundry to PATH in multiple ways to ensure it's available
-ENV PATH="/root/.foundry/bin:${PATH}"
-RUN echo 'export PATH="/root/.foundry/bin:$PATH"' >> /root/.bashrc && \
-    echo 'export PATH="/root/.foundry/bin:$PATH"' >> /etc/profile && \
-    ln -s /root/.foundry/bin/cast /usr/local/bin/cast
+ENV PATH="~/.foundry/bin:${PATH}"
 
 # Clone Optimism repository
 ENV OP_REPO=https://github.com/ethereum-optimism/optimism.git
@@ -49,12 +44,7 @@ RUN mkdir -p ~/optimism && cd ~/optimism \
 COPY *.sh /script/
 RUN chmod +x /script/*.sh
 
-# Source bashrc in entrypoint
 ENTRYPOINT ["/bin/bash", "-c", "\
-    source /root/.bashrc && \
-    echo 'PATH=' $PATH && \
-    which cast && \
-    ls -la /root/.foundry/bin/ && \
     chmod +x /script/*.sh && \
     source /script/1_init_environment.sh && \
     /script/2_faucet.sh && \
