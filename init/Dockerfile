@@ -52,6 +52,9 @@ RUN chmod +x /script/*.sh
 # Source bashrc in entrypoint
 ENTRYPOINT ["/bin/bash", "-c", "\
     source /root/.bashrc && \
+    echo 'PATH=' $PATH && \
+    which cast && \
+    ls -la /root/.foundry/bin/ && \
     chmod +x /script/*.sh && \
     source /script/1_init_environment.sh && \
     /script/2_faucet.sh && \

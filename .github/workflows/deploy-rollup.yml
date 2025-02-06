@@ -6,10 +6,6 @@ permissions:
   pull-requests: write
 
 on:
-  push:
-    branches:
-      - main
-      - feat/deployment-workflow
   workflow_dispatch:
     inputs:
       rollup_chain_id:
@@ -161,3 +157,9 @@ jobs:
         with:
           name: rollup-config-${{ env.BRANCH_NAME }}
           path: artifacts/
+
+      - name: Clean all images and rebuild
+        run: |
+          docker system prune -a --volumes  # Be careful, this removes all unused images
+          cd ~/rollup-deploy/deploy-rollup-testnet-*/init
+          docker compose build --no-cache

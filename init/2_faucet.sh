@@ -38,3 +38,7 @@ send_eth() {
 send_eth "$ADMIN_ADDRESS" $FAUCET_AMOUNT_ADMIN
 send_eth "$BATCHER_ADDRESS" $FAUCET_AMOUNT_BATCHER
 send_eth "$PROPOSER_ADDRESS" $FAUCET_AMOUNT_PROPOSER
+
+echo "DEBUG: Current PATH = $PATH"
+echo "DEBUG: cast location = $(which cast)"
+echo "DEBUG: foundry bin contents = $(ls -la /root/.foundry/bin/)"
