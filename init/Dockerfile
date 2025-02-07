@@ -44,7 +44,7 @@ ENV PATH="/root/.foundry/bin:${PATH}"
 
 # Clone Optimism repository
 ENV OP_REPO=https://github.com/ethereum-optimism/optimism.git
-ARG OP_VERSION=${OP_VERSION:-v1.8.0}
+ARG OP_VERSION=${OP_VERSION:-v1.9.5}
 RUN mkdir -p ~/optimism && cd ~/optimism \
     && git clone $OP_REPO --depth 1 --branch $OP_VERSION --single-branch . \
     && git switch -c $OP_VERSION \
