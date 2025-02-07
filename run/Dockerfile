@@ -1,4 +1,4 @@
-FROM golang:1.22 as op
+FROM golang:1.23 as op
 
 WORKDIR /app
 
@@ -11,7 +11,7 @@ RUN git clone $OP_REPO --depth 1 --branch op-node/$OP_VERSION --single-branch . 
     make -C op-batcher VERSION=$OP_VERSION op-batcher && \
     make -C op-proposer VERSION=$OP_VERSION op-proposer
 
-FROM golang:1.22 as geth
+FROM golang:1.23 as geth
 
 WORKDIR /app
 
