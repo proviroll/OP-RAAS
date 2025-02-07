@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y \
     && sudo rm -rf /var/lib/apt/lists/*
 
 # Install Go
-RUN curl -sL https://golang.org/dl/go1.22.5.linux-amd64.tar.gz | tar -C /usr/local -xzf -
+RUN curl -sL https://golang.org/dl/go1.23.6.linux-amd64.tar.gz | tar -C /usr/local -xzf -
 ENV PATH="$PATH:/usr/local/go/bin"
 
 # Install Node.js and pnpm
