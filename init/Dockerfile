@@ -25,9 +25,8 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - \
     && npm install -g pnpm
 
 # Install Foundry
-ARG FOUNDRY_VERSION=${FOUNDRY_VERSION:-nightly-ef62fdbab638a275fc19a2ff8fe8951c3bd1d9aa}
 RUN curl -L https://foundry.paradigm.xyz | bash && \
-    /root/.foundry/bin/foundryup && \
+    /root/.foundry/bin/foundryup --install nightly && \
     chmod +x /root/.foundry/bin/* && \
     ln -sf /root/.foundry/bin/cast /usr/local/bin/cast && \
     ln -sf /root/.foundry/bin/forge /usr/local/bin/forge && \
