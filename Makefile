@@ -7,7 +7,6 @@ LOG_FILE_DOWN := $(LOG_DIR)/compose_down.log
 
 # Define versions with defaults
 OP_VERSION ?= v1.9.5
-FOUNDRY_VERSION ?= nightly-ef62fdbab638a275fc19a2ff8fe8951c3bd1d9aa
 GETH_VERSION ?= v1.101315.2
 
 init:
@@ -41,7 +40,6 @@ buildx-init:
 	-t chakrellah/op_raas_init:1.9.5 \
 	-t chakrellah/op_raas_init:latest \
 	--build-arg OP_VERSION=$(OP_VERSION) \
-	--buid-arg FOUNDRY_VERSION=$(FOUNDRY_VERSION) \
 	--push ./init
 
 buildx-run:
