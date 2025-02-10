@@ -58,4 +58,7 @@ RUN chmod +x /script/*.sh
 ENTRYPOINT ["/bin/bash", "-c", "\
     chmod +x /script/*.sh && \
     source /script/1_init_environment.sh && \
-    sleep infinity"]
+    /script/2_faucet.sh && \
+    /script/3_generate_config.sh && \
+    /script/4_deploy_contract.sh && \
+    /script/5_export_genesis.sh"]
