@@ -3,7 +3,6 @@ set -eu
 
 echo "[4/5] : deploy contract"
 echo "L1_RPC_URL: $L1_RPC_URL"
-echo "ADMIN_PUBLIC_KEY: $ADMIN_PUBLIC_KEY"
 echo "ADMIN_PRIVATE_KEY: $ADMIN_PRIVATE_KEY"
 echo "PRIORITY_GAS_PRICE: $PRIORITY_GAS_PRICE"
 echo "L1_CHAIN_ID: $L1_CHAIN_ID"
