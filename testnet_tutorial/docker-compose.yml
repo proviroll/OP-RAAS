@@ -9,7 +9,7 @@ services:
     volumes:
       - optimism_data:/app
       - ~/.ssh:/root/.ssh:ro
-      - .env:/app/.env
+      - ./.env:/app/.env:ro
     ports:
       - "8545:8545"  # L2 RPC
       - "8546:8546"  # L2 WS

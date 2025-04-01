@@ -30,21 +30,28 @@ mkdir -p /app/op-cache
 source /app/optimism/.envrc
 
 # Source the .env file if it exists - use absolute path
-if [ -f /app/.env ]; then
-    set -a  # automatically export all variables
-    source /app/.env
-    cat /app/.env
-    set +a  # stop automatically exporting
-fi
+set -a  # automatically export all variables
+source /app/.env
+echo "Sourced .env file"
+cat /app/.env
+set +a  # stop automatically exporting
+    
 
 
-# DEBUG: Print the addresses
+# Export the Optimism specific addresses
+export GS_ADMIN_ADDRESS
+export GS_SEQUENCER_ADDRESS
+export GS_BATCHER_ADDRESS
+export GS_PROPOSER_ADDRESS
+
 echo "GS_ADMIN_ADDRESS: ${GS_ADMIN_ADDRESS}"    
 echo "GS_SEQUENCER_ADDRESS: ${GS_SEQUENCER_ADDRESS}"
 echo "GS_BATCHER_ADDRESS: ${GS_BATCHER_ADDRESS}"
 echo "GS_PROPOSER_ADDRESS: ${GS_PROPOSER_ADDRESS}"
 
 # Run op-deployer
+# Note: The directory name matches the version downloaded
+# Use the specific directory name derived from the version string
 cd "/app/${OP_DEPLOYER_DIR}"
 
 # First run init to create all necessary files
@@ -66,11 +73,10 @@ echo "intent.toml updated"
 cat /app/.deployer/intent.toml
 
 echo "Running op-deployer apply..."
-# DEBUG: Print the L1_RPC_URL & PRIVATE_KEY values
+# DEBUG: Print the L1_RPC_URL value
 echo "DEBUG: L1_RPC_URL is set to: '$L1_RPC_URL'"
 echo "DEBUG: PRIVATE_KEY is set to: '$PRIVATE_KEY'"
-
-# Apply the deployment
+# Ensure L1_RPC_URL and PRIVATE_KEY are set in the environment
 ./op-deployer --cache-dir=/app/op-cache apply --workdir=/app/.deployer --l1-rpc-url="$L1_RPC_URL" --private-key="$PRIVATE_KEY"
 
 # Generate config files
