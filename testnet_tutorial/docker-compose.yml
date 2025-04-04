@@ -7,7 +7,6 @@ services:
       dockerfile: Dockerfile
     container_name: optimism-deployer
     volumes:
-      - optimism_data:/app
       - ~/.ssh:/root/.ssh:ro
       - ./.env:/app/.env:ro
     ports:
@@ -18,10 +17,16 @@ services:
       - "8551:8551"  # Engine API
     networks:
       - optimism-net
-
+    env_file:
+      - ./.env
+    labels:
+      promtail_logging: "true"
+      scrape_location: "optimism"     
+      instance: "optimism-deployer"   
+      network: "optimism-net"         
+      client_name: "${ROLLUP_NAME}"   
+      group: "rollups"                
+      host_type: "production"         
 networks:
   optimism-net:
     driver: bridge
-
-volumes:
-  optimism_data:
