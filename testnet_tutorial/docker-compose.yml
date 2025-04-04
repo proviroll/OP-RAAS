@@ -1,11 +1,11 @@
 version: '3.8'
 
 services:
-  optimism-deployer:
+  optimism-init:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: optimism-deployer
+    container_name: optimism-init
     volumes:
       - ~/.ssh:/root/.ssh:ro
       - ./.env:/app/.env:ro
@@ -22,7 +22,7 @@ services:
     labels:
       promtail_logging: "true"
       scrape_location: "optimism"     
-      instance: "optimism-deployer"   
+      instance: "optimism-init"   
       network: "optimism-net"         
       client_name: "${ROLLUP_NAME}"   
       group: "rollups"                
