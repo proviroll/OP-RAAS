@@ -5,6 +5,9 @@ permissions:
   pull-requests: write
 
 on:
+  push:
+    branches:
+      - feat/testnet-setup
   workflow_dispatch:
     inputs:
       rollup_name:
