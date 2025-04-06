@@ -84,9 +84,9 @@ jobs:
             echo "L1_RPC_KIND=\"alchemy\"" >> testnet_tutorial/.env
             echo "ROLLUP_NAME=\"${{ inputs.rollup_name }}\"" >> testnet_tutorial/.env
             echo "DEPLOYMENT_CONTEXT=\"${{ inputs.rollup_name }}\"" >> testnet_tutorial/.env
-            echo "FAUCET_ADDRESS=\"${{ secrets.L1_FAUCET_ADDRESS }}\"" >> testnet_tutorial/.env
-            echo "FAUCET_PRIVATE_KEY=\"${{ secrets.L1_FAUCET_PRIVATE_KEY }}\"" >> testnet_tutorial/.env
-            echo "L1_RPC_URL=\"${{ secrets.L1_RPC_URL }}\"" >> testnet_tutorial/.env
+            echo "FAUCET_ADDRESS=\"${{ secrets.FAUCET_ADDRESS }}\"" >> testnet_tutorial/.env
+            echo "FAUCET_PRIVATE_KEY=\"${{ secrets.FAUCET_PRIVATE_KEY }}\"" >> testnet_tutorial/.env
+            echo "L1_RPC_URL=\"${{ secrets.RPC_URL }}\"" >> testnet_tutorial/.env
             echo "ROLLUP_ID=\"${{ inputs.rollup_id }}\"" >> testnet_tutorial/.env
             # Change to testnet_tutorial directory before running docker-compose commands
             cd testnet_tutorial
