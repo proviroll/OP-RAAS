@@ -26,7 +26,8 @@ services:
       network: "optimism-net"         
       client_name: "${ROLLUP_NAME}"   
       group: "rollups"                
-      host_type: "production"         
+      host_type: "production"     
+      rollup_id: "${ROLLUP_ID}"    
 networks:
   optimism-net:
     driver: bridge
