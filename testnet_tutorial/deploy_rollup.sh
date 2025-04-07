@@ -75,9 +75,9 @@ cat /app/.deployer/intent.toml
 echo "Running op-deployer apply..."
 # DEBUG: Print the L1_RPC_URL value
 echo "DEBUG: L1_RPC_URL is set to: '$L1_RPC_URL'"
-echo "DEBUG: PRIVATE_KEY is set to: '$FAUCET_PRIVATE_KEY'"
+echo "DEBUG: PRIVATE_KEY is set to: '$PRIVATE_KEY'"
 # Ensure L1_RPC_URL and PRIVATE_KEY are set in the environment
-./op-deployer --cache-dir=/app/op-cache apply --workdir=/app/.deployer --l1-rpc-url="$L1_RPC_URL" --private-key="$FAUCET_PRIVATE_KEY"
+./op-deployer --cache-dir=/app/op-cache apply --workdir=/app/.deployer --l1-rpc-url="$L1_RPC_URL" --private-key="$PRIVATE_KEY"
 
 # Generate config files
 echo "Generating config files..."
