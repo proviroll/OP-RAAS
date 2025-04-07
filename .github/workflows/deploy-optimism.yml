@@ -92,7 +92,7 @@ jobs:
             cd testnet_tutorial
 
             
-            docker-compose up
+            docker-compose up --build
             # Wait for the container to finish and check its logs
             echo "Waiting for initialization to complete..."
             while docker ps | grep -q optimism-init; do
