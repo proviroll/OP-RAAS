@@ -22,6 +22,14 @@ services:
     networks:
       - optimism-net
     restart: on-failure
+    labels: 
+      promtail_logging: "true"
+      scrape_location: "optimism"     
+      instance: "optimism-deployer"   
+      network: "optimism-net"         
+      client_name: "${ROLLUP_NAME}"   
+      group: "rollups"                
+      host_type: "production" 
 
   op-geth:
     build:
@@ -42,6 +50,14 @@ services:
     networks:
       - optimism-net
     restart: on-failure
+    labels: 
+      promtail_logging: "true"
+      scrape_location: "optimism"     
+      instance: "optimism-deployer"   
+      network: "optimism-net"         
+      client_name: "${ROLLUP_NAME}"   
+      group: "rollups"                
+      host_type: "production" 
 
   op-node:
     build:
@@ -63,6 +79,14 @@ services:
     networks:
       - optimism-net
     restart: on-failure
+    labels: 
+      promtail_logging: "true"
+      scrape_location: "optimism"     
+      instance: "optimism-node"   
+      network: "optimism-net"         
+      client_name: "${ROLLUP_NAME}"   
+      group: "rollups"                
+      host_type: "production" 
 
   op-batcher:
     build:
@@ -82,6 +106,14 @@ services:
     networks:
       - optimism-net
     restart: on-failure
+    labels: 
+      promtail_logging: "true"
+      scrape_location: "optimism"     
+      instance: "optimism-batcher"   
+      network: "optimism-net"         
+      client_name: "${ROLLUP_NAME}"   
+      group: "rollups"                
+      host_type: "production" 
 
   op-proposer:
     build:
@@ -99,6 +131,14 @@ services:
     networks:
       - optimism-net
     restart: on-failure
+    labels: 
+      promtail_logging: "true"
+      scrape_location: "optimism"     
+      instance: "optimism-proposer"   
+      network: "optimism-net"         
+      client_name: "${ROLLUP_NAME}"   
+      group: "rollups"                
+      host_type: "production" 
 
 volumes:
   geth_data:
