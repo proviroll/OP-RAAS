@@ -1,9 +1,7 @@
 FROM ubuntu:22.04
 
-# Prevent interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install dependencies
 RUN apt-get update && apt-get install -y \
     curl \
     git \
@@ -41,28 +39,23 @@ RUN curl -L https://foundry.paradigm.xyz | bash && \
     /root/.foundry/bin/foundryup
 ENV PATH=$PATH:/root/.foundry/bin
 
-# Create directories
-RUN mkdir -p /app/optimism /app/op-geth /app/op-cache /app/.deployer
-
 WORKDIR /app
 
+# Clone and setup optimism
 RUN git clone https://github.com/ethereum-optimism/optimism.git && \
     cd optimism && \
     git checkout tutorials/chain && \
-    pnpm install && \
-    make op-node op-batcher op-proposer
+    pnpm install 
 
-# Create directories (update existing RUN command)
+# Create necessary directories
 RUN mkdir -p /app/op-geth /app/op-cache /app/.deployer
 
-
 # Copy scripts
-COPY entrypoint.sh /app/entrypoint.sh
-COPY setup_optimism.sh /app/setup_optimism.sh
-COPY setup_op_geth.sh /app/setup_op_geth.sh
-COPY deploy_rollup.sh /app/deploy_rollup.sh
+COPY scripts/setup-optimism.sh /app/setup-optimism.sh
+COPY scripts/deploy-rollup.sh /app/deploy-rollup.sh
+COPY scripts/deployer-entrypoint.sh /app/entrypoint.sh
 
 # Make scripts executable
 RUN chmod +x /app/*.sh
 
-ENTRYPOINT ["/app/entrypoint.sh"]
+ENTRYPOINT ["/app/entrypoint.sh"] 

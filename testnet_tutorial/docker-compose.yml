@@ -1,33 +1,111 @@
 version: '3.8'
 
 services:
-  optimism-init:
+  deployer:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: optimism-init
+      dockerfile: Dockerfile.deployer
+    container_name: optimism-deployer
     volumes:
-      - ~/.ssh:/root/.ssh:ro
+      - deployer_data:/app/.deployer
       - ./.env:/app/.env:ro
+      - optimism_data:/app/optimism
+    environment:
+      - L1_RPC_URL=${L1_RPC_URL}
+      - L1_RPC_KIND=${L1_RPC_KIND}
+      - PRIVATE_KEY=${PRIVATE_KEY}
+      - L2_CHAIN_ID=${L2_CHAIN_ID}
+      - GS_ADMIN_PRIVATE_KEY
+      - GS_PROPOSER_PRIVATE_KEY
+      - GS_BATCHER_PRIVATE_KEY
+      - GS_SEQUENCER_PRIVATE_KEY
+    networks:
+      - optimism-net
+    restart: on-failure
+
+  op-geth:
+    build:
+      context: .
+      dockerfile: Dockerfile.geth
+    container_name: op-geth
+    volumes:
+      - geth_data:/app/op-geth/datadir
+      - deployer_data:/app/.deployer:ro
+      - jwt_data:/app/jwt
+      - optimism_data:/app/optimism:ro
     ports:
       - "8545:8545"  # L2 RPC
       - "8546:8546"  # L2 WS
-      - "9545:9545"  # Sequencer RPC
-      - "7545:7545"  # Batcher RPC
       - "8551:8551"  # Engine API
+    depends_on:
+      - deployer
     networks:
       - optimism-net
-    env_file:
-      - ./.env
-    labels:
-      promtail_logging: "true"
-      scrape_location: "optimism"     
-      instance: "optimism-init"   
-      network: "optimism-net"         
-      client_name: "${ROLLUP_NAME}"   
-      group: "rollups"                
-      host_type: "production"     
-      rollup_id: "${ROLLUP_ID}"    
+    restart: on-failure
+
+  op-node:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    container_name: op-node
+    volumes:
+      - deployer_data:/app/.deployer:ro
+      - jwt_data:/app/jwt
+      - optimism_data:/app/optimism:ro
+    ports:
+      - "9545:9545"  # Sequencer RPC
+    environment:
+      - L1_RPC_URL=${L1_RPC_URL}
+      - L1_RPC_KIND=${L1_RPC_KIND}
+      - GS_SEQUENCER_PRIVATE_KEY=${GS_SEQUENCER_PRIVATE_KEY}
+    depends_on:
+      - op-geth
+    networks:
+      - optimism-net
+    restart: on-failure
+
+  op-batcher:
+    build:
+      context: .
+      dockerfile: Dockerfile.batcher
+    container_name: op-batcher
+    volumes:
+      - deployer_data:/app/.deployer:ro
+      - optimism_data:/app/optimism:ro
+    ports:
+      - "7545:7545"  # Batcher RPC
+    environment:
+      - L1_RPC_URL=${L1_RPC_URL}
+      - GS_BATCHER_PRIVATE_KEY=${GS_BATCHER_PRIVATE_KEY}
+    depends_on:
+      - op-node
+    networks:
+      - optimism-net
+    restart: on-failure
+
+  op-proposer:
+    build:
+      context: .
+      dockerfile: Dockerfile.proposer
+    container_name: op-proposer
+    volumes:
+      - deployer_data:/app/.deployer:ro
+      - optimism_data:/app/optimism:ro
+    environment:
+      - L1_RPC_URL=${L1_RPC_URL}
+      - GS_PROPOSER_PRIVATE_KEY=${GS_PROPOSER_PRIVATE_KEY}
+    depends_on:
+      - op-node
+    networks:
+      - optimism-net
+    restart: on-failure
+
+volumes:
+  geth_data:
+  deployer_data:
+  jwt_data:
+  optimism_data:
+
 networks:
   optimism-net:
     driver: bridge

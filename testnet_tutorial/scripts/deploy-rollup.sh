@@ -28,6 +28,7 @@ mkdir -p /app/op-cache
 
 # Source environment variables
 source /app/optimism/.envrc
+cat /app/optimism/.envrc 
 
 # Source the .env file if it exists - use absolute path
 set -a  # automatically export all variables
@@ -56,7 +57,7 @@ cd "/app/${OP_DEPLOYER_DIR}"
 
 # First run init to create all necessary files
 echo "Initializing deployment context..."
-./op-deployer init --l1-chain-id 11155111 --l2-chain-ids ${L2_CHAIN_ID} --workdir /app/.deployer
+./op-deployer init --l1-chain-id 11155111 --l2-chain-ids ${L2_CHAIN_ID} --workdir /app/.deployer 
 
 # Update only the zero addresses in the generated intent.toml
 sed -i \
@@ -77,16 +78,13 @@ echo "Running op-deployer apply..."
 echo "DEBUG: L1_RPC_URL is set to: '$L1_RPC_URL'"
 echo "DEBUG: PRIVATE_KEY is set to: '$PRIVATE_KEY'"
 # Ensure L1_RPC_URL and PRIVATE_KEY are set in the environment
-./op-deployer --cache-dir=/app/op-cache apply --workdir=/app/.deployer --l1-rpc-url="$L1_RPC_URL" --private-key="$PRIVATE_KEY"
-
+./op-deployer --cache-dir=/app/op-cache apply --workdir=/app/.deployer --l1-rpc-url="$L1_RPC_URL" --private-key="$PRIVATE_KEY" 
 # Generate config files
 echo "Generating config files..."
 ./op-deployer inspect genesis --workdir /app/.deployer ${L2_CHAIN_ID} > /app/.deployer/genesis.json
 ./op-deployer inspect rollup --workdir /app/.deployer ${L2_CHAIN_ID} > /app/.deployer/rollup.json
 
 echo "Config files generated"
-echo "genesis.json:"
-cat /app/.deployer/genesis.json
 echo "rollup.json:"
 cat /app/.deployer/rollup.json
 
