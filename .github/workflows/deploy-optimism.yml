@@ -107,7 +107,7 @@ jobs:
           ENDSSH
       - name: Save wallets
         run: |
-          mkdir -p artifacts
+          ssh ${{ secrets.DEPLOY_USERNAME }}@${{ secrets.DEPLOY_HOST }} "mkdir -p ~/optimism-deploy/${{ env.BRANCH_NAME }}/artifacts"
           # Only attempt to copy if remote artifacts directory is not empty
           ssh ${{ secrets.DEPLOY_USERNAME }}@${{ secrets.DEPLOY_HOST }} "[ -d ~/optimism-deploy/${{ env.BRANCH_NAME }}/artifacts ] && [ \"\$(ls -A ~/optimism-deploy/${{ env.BRANCH_NAME }}/artifacts)\" ] && exit 0 || exit 1" && \
           scp ${{ secrets.DEPLOY_USERNAME }}@${{ secrets.DEPLOY_HOST }}:~/optimism-deploy/${{ env.BRANCH_NAME }}/artifacts/* artifacts/ || \
@@ -117,3 +117,9 @@ jobs:
         with:
           name: optimism-wallets-${{ env.BRANCH_NAME }}
           path: artifacts/
+      - name: Stop containers
+        run: |
+          ssh ${{ secrets.DEPLOY_USERNAME }}@${{ secrets.DEPLOY_HOST }} << 'ENDSSH'
+            cd ~/optimism-deploy/${{ env.BRANCH_NAME }}
+            docker-compose down -v
+          ENDSSH 
