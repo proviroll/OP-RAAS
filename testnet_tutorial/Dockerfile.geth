@@ -1,0 +1,26 @@
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    git make wget gcc libc6-dev openssl curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Go 1.21.6
+RUN wget https://go.dev/dl/go1.21.6.linux-amd64.tar.gz && \
+    tar -C /usr/local -xzf go1.21.6.linux-amd64.tar.gz && \
+    rm go1.21.6.linux-amd64.tar.gz
+ENV PATH=$PATH:/usr/local/go/bin
+
+WORKDIR /app
+
+# Clone and build op-geth
+RUN git clone https://github.com/ethereum-optimism/op-geth.git && \
+    cd op-geth && \
+    make geth
+
+COPY scripts/geth-entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+ENTRYPOINT ["/app/entrypoint.sh"] 
