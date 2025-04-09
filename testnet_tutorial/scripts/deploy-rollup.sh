@@ -91,7 +91,7 @@ cat /app/.deployer/rollup.json
 echo "Uploading artifacts..."
 
 # Create deployment directory name
-DEPLOY_DIR="${ROLLUP_NAME}-$(date +%Y%m%d-%H%M%S)"
+DEPLOY_DIR="${ROLLUP_NAME}"
 
 # Upload to S3 if AWS credentials are configured
 if [ -n "$AWS_ACCESS_KEY_ID" ] && [ -n "$AWS_SECRET_ACCESS_KEY" ]; then
