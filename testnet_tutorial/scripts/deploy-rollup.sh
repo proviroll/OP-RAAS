@@ -88,4 +88,29 @@ echo "Config files generated"
 echo "rollup.json:"
 cat /app/.deployer/rollup.json
 
+echo "Uploading artifacts..."
+
+# Create deployment directory name
+DEPLOY_DIR="${ROLLUP_NAME}-$(date +%Y%m%d-%H%M%S)"
+
+# Upload to S3 if AWS credentials are configured
+if [ -n "$AWS_ACCESS_KEY_ID" ] && [ -n "$AWS_SECRET_ACCESS_KEY" ]; then
+    aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+    aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+    aws configure set default.region ${AWS_REGION:-us-east-1}
+
+    # Upload files
+    aws s3 cp /app/.deployer/genesis.json s3://${AWS_BUCKET_NAME}/$DEPLOY_DIR/genesis.json
+    aws s3 cp /app/.deployer/rollup.json s3://${AWS_BUCKET_NAME}/$DEPLOY_DIR/rollup.json
+    
+    echo "Files uploaded to s3://${AWS_BUCKET_NAME}/$DEPLOY_DIR/"
+    
+    # If the bucket has website hosting enabled, output the URLs
+    echo "Access your files at:"
+    echo "genesis.json: https://${AWS_BUCKET_NAME}.s3.${AWS_REGION:-us-east-1}.amazonaws.com/$DEPLOY_DIR/genesis.json"
+    echo "rollup.json: https://${AWS_BUCKET_NAME}.s3.${AWS_REGION:-us-east-1}.amazonaws.com/$DEPLOY_DIR/rollup.json"
+else
+    echo "AWS credentials not configured - skipping S3 upload"
+fi
+
 echo "Optimism initialization finished."

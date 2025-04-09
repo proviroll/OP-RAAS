@@ -18,7 +18,9 @@ RUN apt-get update && apt-get install -y \
     direnv \
     software-properties-common \
     make \
-    && rm -rf /var/lib/apt/lists/*
+    python3-pip \
+    && rm -rf /var/lib/apt/lists/* && \
+    pip3 install awscli
 
 # Install Go 1.21.6
 RUN wget https://go.dev/dl/go1.21.6.linux-amd64.tar.gz && \
