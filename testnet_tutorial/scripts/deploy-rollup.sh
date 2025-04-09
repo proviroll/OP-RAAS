@@ -88,4 +88,4 @@ echo "Config files generated"
 echo "rollup.json:"
 cat /app/.deployer/rollup.json
 
-echo "Optimism deployment script finished."
+echo "Optimism initialization finished."
