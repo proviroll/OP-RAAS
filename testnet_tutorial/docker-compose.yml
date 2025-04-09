@@ -8,6 +8,10 @@ services:
     container_name: optimism-deployer
     environment:
       - COMPOSE_HTTP_TIMEOUT=200
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+      - AWS_BUCKET_NAME=${AWS_BUCKET_NAME}
     volumes:
       - deployer_data:/app/.deployer
       - ./.env:/app/.env:ro

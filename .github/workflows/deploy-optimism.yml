@@ -88,6 +88,10 @@ jobs:
             echo "PRIVATE_KEY=\"${{ secrets.FAUCET_PRIVATE_KEY }}\"" >> testnet_tutorial/.env
             echo "L1_RPC_URL=\"${{ secrets.RPC_URL }}\"" >> testnet_tutorial/.env
             echo "ROLLUP_ID=\"${{ inputs.rollup_id }}\"" >> testnet_tutorial/.env
+            echo "AWS_ACCESS_KEY_ID=\"${{ secrets.AWS_ACCESS_KEY_ID }}\"" >> testnet_tutorial/.env
+            echo "AWS_SECRET_ACCESS_KEY=\"${{ secrets.AWS_SECRET_ACCESS_KEY }}\"" >> testnet_tutorial/.env
+            echo "AWS_REGION=\"${{ secrets.AWS_REGION }}\"" >> testnet_tutorial/.env
+            echo "AWS_BUCKET_NAME=\"${{ secrets.AWS_BUCKET_NAME }}\"" >> testnet_tutorial/.env
             # Change to testnet_tutorial directory before running docker-compose commands
             cd testnet_tutorial
 
