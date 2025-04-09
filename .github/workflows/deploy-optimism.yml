@@ -119,5 +119,5 @@ jobs:
           path: artifacts/
       - name: Stop containers
         run: |
-          ssh ${{ secrets.DEPLOY_USERNAME }}@${{ secrets.DEPLOY_HOST }} cd ~/optimism-deploy/${{ env.BRANCH_NAME }}
-            docker-compose down -v
+          ssh ${{ secrets.DEPLOY_USERNAME }}@${{ secrets.DEPLOY_HOST }} "cd ~/optimism-deploy/${{ env.BRANCH_NAME }} && docker-compose down -v"
+            

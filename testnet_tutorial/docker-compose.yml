@@ -6,6 +6,8 @@ services:
       context: .
       dockerfile: Dockerfile.deployer
     container_name: optimism-deployer
+    environment:
+      - COMPOSE_HTTP_TIMEOUT=200
     volumes:
       - deployer_data:/app/.deployer
       - ./.env:/app/.env:ro
