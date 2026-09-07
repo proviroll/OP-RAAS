@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y \
     && sudo rm -rf /var/lib/apt/lists/*
 
 # Install Go
-RUN curl -sL https://golang.org/dl/go1.22.5.linux-amd64.tar.gz | tar -C /usr/local -xzf -
+RUN curl -sL https://golang.org/dl/go1.23.6.linux-amd64.tar.gz | tar -C /usr/local -xzf -
 ENV PATH="$PATH:/usr/local/go/bin"
 
 # Install Node.js and pnpm
@@ -25,14 +25,25 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - \
     && npm install -g pnpm
 
 # Install Foundry
-ARG FOUNDRY_VERSION=${FOUNDRY_VERSION:-nightly-ef62fdbab638a275fc19a2ff8fe8951c3bd1d9aa}
-RUN curl -L https://foundry.paradigm.xyz | sudo -E bash - \
-    && . ~/.bashrc && foundryup -v "$FOUNDRY_VERSION"
-ENV PATH="~/.foundry/bin:${PATH}"
+RUN curl -L https://foundry.paradigm.xyz | bash && \
+    /root/.foundry/bin/foundryup --install nightly && \
+    chmod +x /root/.foundry/bin/* && \
+    ln -sf /root/.foundry/bin/cast /usr/local/bin/cast && \
+    ln -sf /root/.foundry/bin/forge /usr/local/bin/forge && \
+    ln -sf /root/.foundry/bin/anvil /usr/local/bin/anvil && \
+    echo 'export PATH="/root/.foundry/bin:/usr/local/bin:$PATH"' >> /etc/profile && \
+    echo 'export PATH="/root/.foundry/bin:/usr/local/bin:$PATH"' >> /etc/bash.bashrc && \
+    echo 'export PATH="/root/.foundry/bin:/usr/local/bin:$PATH"' >> /root/.bashrc
+
+ENV PATH="/root/.foundry/bin:/usr/local/bin:${PATH}"
+
+# Verify foundry installation
+RUN cast --version || exit 1
+ENV PATH="/root/.foundry/bin:${PATH}"
 
 # Clone Optimism repository
 ENV OP_REPO=https://github.com/ethereum-optimism/optimism.git
-ARG OP_VERSION=${OP_VERSION:-v1.8.0}
+ARG OP_VERSION=${OP_VERSION:-v1.9.5}
 RUN mkdir -p ~/optimism && cd ~/optimism \
     && git clone $OP_REPO --depth 1 --branch $OP_VERSION --single-branch . \
     && git switch -c $OP_VERSION \

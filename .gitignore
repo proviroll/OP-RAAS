@@ -3,3 +3,4 @@ data-scan
 config
 logs
 .env
+.vscode
