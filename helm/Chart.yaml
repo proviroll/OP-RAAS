@@ -1,0 +1,19 @@
+apiVersion: v2
+name: helm
+version: 0.1.0
+dependencies:
+ # - name: init
+ #   version: "0.1.2"
+ #   repository: "file://./init"
+  - name: op-geth
+    version: "0.1.2"
+    repository: "file://./op-geth"
+  - name: op-node
+    version: "0.1.2"
+    repository: "file://./op-node"
+  - name: op-batcher
+    version: "0.1.2"
+    repository: "file://./op-batcher"
+  - name: op-proposer
+    version: "0.1.2"
+    repository: "file://./op-proposer"
