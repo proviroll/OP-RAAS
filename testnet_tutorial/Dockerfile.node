@@ -1,0 +1,42 @@
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    git \
+    build-essential \
+    make \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs
+
+# Install just
+RUN npm install -g rust-just
+
+# Install Go 1.21.6
+RUN wget https://go.dev/dl/go1.21.6.linux-amd64.tar.gz && \
+    tar -C /usr/local -xzf go1.21.6.linux-amd64.tar.gz && \
+    rm go1.21.6.linux-amd64.tar.gz
+ENV PATH=$PATH:/usr/local/go/bin
+
+WORKDIR /app
+
+# Clone and build op-node from the optimism repo
+RUN git clone https://github.com/ethereum-optimism/optimism.git && \
+    cd optimism && \
+    git checkout develop && \
+    make op-node && \
+    mv op-node /app/op-node
+
+# Verify the binary exists and show its location
+RUN ls -la /app/op-node
+
+COPY scripts/node-entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+ENTRYPOINT ["/app/entrypoint.sh"]
